@@ -1,6 +1,7 @@
 'use client';
 
 import { DynamicContextProvider, DynamicWidget, useDynamicContext } from '@dynamic-labs/sdk-react-core';
+import '@dynamic-labs/solana'; // Import nécessaire pour supporter Solana
 import { MoonPayProvider, MoonPayBuyWidget } from '@moonpay/moonpay-react';
 import { useEffect, useState } from 'react';
 
@@ -9,10 +10,23 @@ function WalletAndMoonPay() {
   const [walletAddress, setWalletAddress] = useState<string>('');
 
   useEffect(() => {
+    console.log('🔍 Debug - Environment ID:', process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID);
+    console.log('🔍 Debug - user:', user);
+    console.log('🔍 Debug - primaryWallet:', primaryWallet);
+    console.log('🔍 Debug - primaryWallet?.address:', primaryWallet?.address);
+    console.log('🔍 Debug - primaryWallet?.chain:', primaryWallet?.chain);
+    console.log('🔍 Debug - primaryWallet?.connector:', primaryWallet?.connector);
+    
     if (primaryWallet?.address) {
       setWalletAddress(primaryWallet.address);
+      console.log('✅ Wallet address set:', primaryWallet.address);
+    } else {
+      console.log('⚠️ No wallet address found');
+      if (user) {
+        console.log('❌ User exists but no wallet - EMBEDDED WALLETS NOT WORKING');
+      }
     }
-  }, [primaryWallet]);
+  }, [primaryWallet, user]);
 
   const handleUrlSignatureRequested = async (widgetUrl: string) => {
     try {
@@ -76,10 +90,23 @@ function WalletAndMoonPay() {
                     </p>
                   </div>
                 ) : (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                    <p className="text-sm text-blue-800">
-                      🔄 Loading wallet address...
-                    </p>
+                  <div>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                      <p className="text-sm text-blue-800 mb-2">
+                        🔄 Loading wallet address...
+                      </p>
+                      <p className="text-xs text-blue-600">
+                        If this persists, check the browser console (F12) for errors
+                      </p>
+                    </div>
+                    
+                    {/* Debug info */}
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4 text-xs">
+                      <p className="font-semibold text-yellow-900 mb-1">Debug Info:</p>
+                      <p className="text-yellow-800">User ID: {user?.userId || 'N/A'}</p>
+                      <p className="text-yellow-800">Primary Wallet: {primaryWallet ? 'Exists' : 'Not found'}</p>
+                      <p className="text-yellow-800">Wallet Chain: {primaryWallet?.chain || 'N/A'}</p>
+                    </div>
                   </div>
                 )}
                 
@@ -146,8 +173,8 @@ export default function Home() {
     <DynamicContextProvider
       settings={{
         environmentId: process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID || '',
-        // PAS de walletConnectors = embedded wallets uniquement !
         initialAuthenticationMode: 'connect-only',
+        debugError: true,
       }}
     >
       <WalletAndMoonPay />
