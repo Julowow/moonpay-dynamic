@@ -1,7 +1,6 @@
 'use client';
 
 import { DynamicContextProvider, DynamicWidget, useDynamicContext } from '@dynamic-labs/sdk-react-core';
-import { SolanaWalletConnectors } from '@dynamic-labs/solana';
 import { MoonPayProvider, MoonPayBuyWidget } from '@moonpay/moonpay-react';
 import { useEffect, useState } from 'react';
 
@@ -126,7 +125,8 @@ export default function Home() {
     <DynamicContextProvider
       settings={{
         environmentId: process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID || '',
-        walletConnectors: [SolanaWalletConnectors],
+        // PAS de walletConnectors = embedded wallets uniquement !
+        initialAuthenticationMode: 'connect-only',
       }}
     >
       <WalletAndMoonPay />
