@@ -5,7 +5,7 @@ import { MoonPayProvider, MoonPayBuyWidget } from '@moonpay/moonpay-react';
 import { useEffect, useState } from 'react';
 
 function WalletAndMoonPay() {
-  const { primaryWallet, user } = useDynamicContext();
+  const { primaryWallet, user, handleLogOut } = useDynamicContext();
   const [walletAddress, setWalletAddress] = useState<string>('');
 
   useEffect(() => {
@@ -56,18 +56,31 @@ function WalletAndMoonPay() {
               {user ? 'Your wallet is connected!' : 'Connect your wallet to continue'}
             </p>
             
-            <div className="mb-6">
-              <DynamicWidget />
-            </div>
+            {/* Show Dynamic Widget only if NOT connected */}
+            {!user && (
+              <div className="mb-6">
+                <DynamicWidget />
+              </div>
+            )}
 
+            {/* Show wallet info and disconnect button if connected */}
             {walletAddress && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <p className="text-sm font-medium text-green-800 mb-1">
-                  ✓ Wallet Connected
-                </p>
-                <p className="text-xs text-green-700 break-all">
-                  {walletAddress}
-                </p>
+              <div>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                  <p className="text-sm font-medium text-green-800 mb-1">
+                    ✓ Wallet Connected
+                  </p>
+                  <p className="text-xs text-green-700 break-all">
+                    {walletAddress}
+                  </p>
+                </div>
+                
+                <button
+                  onClick={handleLogOut}
+                  className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  Disconnect Wallet
+                </button>
               </div>
             )}
           </div>
