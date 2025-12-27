@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@dynamic-labs/sdk-react-core": "^3.9.13",
-    "@dynamic-labs/solana": "^3.9.13",
     "@moonpay/moonpay-js": "^0.6.3",
     "@moonpay/moonpay-react": "^1.8.4",
     "next": "14.2.18",
